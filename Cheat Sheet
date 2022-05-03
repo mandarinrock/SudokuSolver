@@ -1,0 +1,2 @@
+to test puzzle 6 "p6" run: python solverDraft1.py ./puzzles/p6
+to test and grade all run: ./Grade

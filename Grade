@@ -8,7 +8,7 @@ j=0
 
 START_TIME=$SECONDS
 
-for i in `seq 1 5`; do
+for i in `seq 1 10`; do
     if [ -f tempresult1 ];
     then
       rm tempresult1
@@ -33,7 +33,7 @@ for i in `seq 1 5`; do
     echo "" >> result
 done
 
-echo " SCORE: $j / 5";
+echo " SCORE: $j / 10";
 
 ELAPSED_TIME=$(($SECONDS - $START_TIME))
 echo "Elapsed time (sec): $ELAPSED_TIME"

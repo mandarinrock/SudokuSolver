@@ -1,16 +1,13 @@
-import sys, getopt # DELETE second
+import sys
 import math
 import copy
-# import numpy as np
-
 
 debug = True
-debug = False
+# debug = False
+
 
 
 def printPuzzle(printablePuzzle):
-
-    # if debug: print(printablePuzzle) # DEBUG
 
     for i in range(len(printablePuzzle)):
 
@@ -27,6 +24,7 @@ def printPuzzle(printablePuzzle):
             print(printablePuzzle[i][-1], end = "")
 
 
+
 def loadPuzzle(puzzlePath):
 
     originalPuzzle = []
@@ -37,8 +35,6 @@ def loadPuzzle(puzzlePath):
 
     for i in range(len(puzzleLines)):
 
-        # puzzleLines[i].split()
-        # if debug: print(puzzleLines[i], end = "") # DEBUG
         nextPuzzleLine = []
 
         for j in puzzleLines[i]:
@@ -47,28 +43,20 @@ def loadPuzzle(puzzlePath):
 
                 nextPuzzleLine.append((int)(j))
 
-
         originalPuzzle.append(nextPuzzleLine)
 
-            # print(puzzleLines[i][j], end= " ")
-
-    if debug: printPuzzle(originalPuzzle)
+    # if debug: printPuzzle(originalPuzzle) # DEBUG
 
     return originalPuzzle
+
 
 
 def getBlocks(linePuzzle):
 
     # Convert puzzle organized by rows into puzzle organized by 3x3 blocks
 
-    # puzzleBlocks = [[0] * 9] * 9
     puzzleBlocks = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], ]
 
-    # pCount = -1
-    # iOffset = -3
-
-
-    
     for i in range(len(linePuzzle)):
 
         # if i % 3 == 0:
@@ -89,13 +77,10 @@ def getBlocks(linePuzzle):
             # puzzleBlocks[iOffset + jOffset][(3 * (i % 3)) + (j % 3)] = linePuzzle[i][j]
             puzzleBlocks[(3 * math.floor(i / 3)) + math.floor(j / 3)][(3 * (i % 3)) + (j % 3)] = copy.copy(linePuzzle[i][j])
 
-    
-
-
-
     # puzzleBlocks[0][0] = linePuzzle[0][0]
 
     return puzzleBlocks
+
 
 
 def blockNum(row, col):
@@ -104,12 +89,9 @@ def blockNum(row, col):
 
 
 
-
-
 def possibleCheck(group, value):
 
     # Check if the value already exists in the specified row, column, or 3x3 block
-
     for i in group:
 
         if i == value:
@@ -117,6 +99,7 @@ def possibleCheck(group, value):
             return False
 
     return True
+
 
 
 def check(currentPuzzle, row, col, value):
@@ -156,201 +139,144 @@ def check(currentPuzzle, row, col, value):
         return False
 
 
-def solver(ogPuzzle, lastCount = None):
 
-    curPuzzle = copy.copy(ogPuzzle)
-    # possiblePuzzle = copy.copy(curPuzzle)
-    unsolved = []
+def guesser(ogPuzzle, lastCount = None):
+
+    curPuzzle = copy.deepcopy(ogPuzzle)
     if lastCount == None:
         lastCount = 0
-
     unsolvedCount = 0
-    minPossible = 9
-    minRow = 0
-    minCol = 0
-    minVals = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    # ogBlocks = getBlocks(ogPuzzle)
-    # print(ogBlocks) # TEMP
+    minValues = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    minX = 9
+    minY = 9
 
     # Do an initial sweep, replacing all 0s with all possible notes
-
-    # for i in range(len(possiblePuzzle)):
     for i in range(len(curPuzzle)):
 
-        # for j in range(len(possiblePuzzle[i])):
         for j in range(len(curPuzzle[i])):
 
-            # if possiblePuzzle[i][j] == 0:
             if curPuzzle[i][j] == 0:
 
                 unsolvedCount += 1
-
-                
-
-
-
-                unsolved.append([i, j]) # TODO
-
                 possibleValues = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
-                # for testVal in range(9):
                 for testVal in range(1, 10):
 
                     if check(curPuzzle, i, j, testVal) == False:
 
                         if testVal in possibleValues:
+
                             possibleValues.remove(testVal)
-                        
-
-                        # possiblePuzzle[i][j].append(testVal)
-
-                        # if 0 in possiblePuzzle[i][j]:
-
-                        #     possiblePuzzle[i][j].remove(0)
-
-                # print("(" + str(i) + ", " + str(j) + "): ", end = "")
-                # print(possibleValues)
 
                 if len(possibleValues) == 1:
 
                     curPuzzle[i][j] = copy.copy(possibleValues[0])
                     unsolvedCount -= 1
-                
-                elif len(possibleValues) < len(minVals):
 
-                    minRow = i
-                    minCol = j
-                    minVals = copy.copy(possibleValues)
-                    # unsolved.remove([i, j])
-                    # i = 0
-                    # j = 0
-                    # break
-                # elif blockNum(i, j) == 0:
+                elif len(possibleValues) < len(minValues):
 
-                #     tempBlock = getBlocks(curPuzzle)
-                #     print(tempBlock[0])
+                    minX = i
+                    minY = j
+                    minValues = copy.deepcopy(possibleValues)
 
-                    # else: # NOTE may not be necessary, could just recopy curPuzzle
+    if unsolvedCount > 0 and unsolvedCount != lastCount:
 
-                    #     if testVal in possiblePuzzle[i][j]:
-
-                    #         possiblePuzzle[i][j].remove(testVal)
-
-                # if len(possiblePuzzle[i][j]) == 2: # TODO may want to tab right
-
-                    # curPuzzle[i][j] = copy.copy(possiblePuzzle[i][j][1])
-                    # i = 0
-                    # break
-
-    if unsolvedCount > 0:
-
-        backupPuzzle = copy.copy(curPuzzle)
-        if unsolvedCount == lastCount:
-
-            # print("Something went wrong")
-            # printPuzzle(curPuzzle)
-            # quit()
-            # for i in minVals:
-            possibleValues = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-
-            for testVal in range(1, 10):
-
-                if check(curPuzzle, minRow, minCol, testVal) == False:
-
-                    if testVal in possibleValues:
-                        possibleValues.remove(testVal)
-
-            for newGuess in possibleValues:
-
-                curPuzzle = copy.copy(backupPuzzle)
-                printPuzzle(curPuzzle)
-
-                print("\nTesting: " + str(newGuess) + " at (" + str(minRow) + ", " + str(minCol) + ")")
-
-                curPuzzle[minRow][minCol] = copy.copy(newGuess)
-                solver(curPuzzle, unsolvedCount-1)
-
-                # for reset in unsolved:
-
-                #     curPuzzle[reset[0]][reset[1]] = 0
-                curPuzzle = copy.copy(ogPuzzle)
-                printPuzzle(curPuzzle)
-                
-                print("\nFinished testing: " + str(newGuess) + " at (" + str(minRow) + ", " + str(minCol) + ")")
-
-
-            for i in range(len(curPuzzle)):
-
-                for j in range(len(curPuzzle)):
-
-                        if check(curPuzzle, i, j, testVal) == True:
-
-                            curPuzzle[i][j] = testVal
-                            solver(curPuzzle, unsolvedCount-1)
-
-
-            
-
-        else:
-
-            solver(curPuzzle, unsolvedCount)
+        # If there is still unsolved cells and the most recent run was an improvement, then run it again
+        solver(curPuzzle, unsolvedCount)
+        # print("Program should never reach here") # DEBUG
+        # quit()
 
     elif unsolvedCount == 0:
 
-        # print("Solved!")
+        # If there are no unsolved cells left, then the puzzle has been solved
         printPuzzle(curPuzzle)
+        if debug: print("Solved!") # DEBUG
         quit()
 
-    else:
+    elif unsolvedCount == lastCount:
 
-        print("Something went wrong")
-        # return copy.copy(ogPuzzle)
+        # If there has been no improvement in the most recent run, then begin guessing algorithm
+        # print(curPuzzle) # DEBUG
+        # print(minX)
+        # print(minY)
 
-    # i = 0
-    # while len(unsolved) != 0:
+        for guessValue in minValues:
 
-        # unsolved[i]
+            # print(guessValue) # DEBUG
 
-    # for i in range(len(curPuzzle)):
-
-    #     for j in range(len(curPuzzle[i])):
-
-    #         if curPuzzle[i][j] == 0:
-
-    #             possibleValues = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-
-    #             for testVal in range(1, 10):
-
-    #                 if check(curPuzzle, i, j, testVal) == False:
-
-    #                     if testVal in possibleValues:
-    #                         possibleValues.remove(testVal)
-
-
-    #                     # possiblePuzzle[i][j].append(testVal)
-
-    #                     # if 0 in possiblePuzzle[i][j]:
-
-    #                     #     possiblePuzzle[i][j].remove(0)
-
-    #             print("(" + str(i) + ", " + str(j) + "): ", end = "")
-    #             print(possibleValues)
+            guessPuzzle = copy.deepcopy(curPuzzle)
+            guessPuzzle[minX][minY] = guessValue
+            guesser(guessPuzzle, unsolvedCount - 1)
 
 
 
-    # printPuzzle(curPuzzle)
+def solver(ogPuzzle, lastCount = None):
 
+    curPuzzle = copy.deepcopy(ogPuzzle)
+    if lastCount == None:
+        lastCount = 0
+    unsolvedCount = 0
+    minValues = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    minX = 9
+    minY = 9
 
+    # Do an initial sweep, replacing all 0s with all possible notes
+    for i in range(len(curPuzzle)):
 
+        for j in range(len(curPuzzle[i])):
 
+            if curPuzzle[i][j] == 0:
 
+                unsolvedCount += 1
+                possibleValues = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
+                for testVal in range(1, 10):
 
+                    if check(curPuzzle, i, j, testVal) == False:
 
+                        if testVal in possibleValues:
 
+                            possibleValues.remove(testVal)
 
+                if len(possibleValues) == 1:
 
+                    curPuzzle[i][j] = copy.copy(possibleValues[0])
+                    unsolvedCount -= 1
 
+                elif len(possibleValues) < len(minValues):
+
+                    minX = i
+                    minY = j
+                    minValues = copy.deepcopy(possibleValues)
+
+    if unsolvedCount > 0 and unsolvedCount != lastCount:
+
+        # If there is still unsolved cells and the most recent run was an improvement, then run it again
+        solver(curPuzzle, unsolvedCount)
+        # print("Program should never reach here") # DEBUG
+        # quit()
+
+    elif unsolvedCount == 0:
+
+        # If there are no unsolved cells left, then the puzzle has been solved
+        printPuzzle(curPuzzle)
+        if debug: print("Solved!") # DEBUG
+        quit()
+
+    elif unsolvedCount == lastCount:
+
+        # If there has been no improvement in the most recent run, then begin guessing algorithm
+        if debug: printPuzzle(curPuzzle) # DEBUG
+
+        for guessValue in minValues:
+
+            if debug: print("\n[" + str(minX) + "][" + str(minY) + "]: " + str(guessValue)) # DEBUG
+            # print(guessValue) # DEBUG
+
+            guessPuzzle = copy.deepcopy(curPuzzle)
+            guessPuzzle[minX][minY] = guessValue
+            # guesser(guessPuzzle, unsolvedCount - 1)
+            solver(guessPuzzle, unsolvedCount - 1)
 
 
 
@@ -372,6 +298,7 @@ def main():
 
     # printInput(sys.argv)
     sudokuSolverMain()
+
 
 
 if(__name__ == '__main__'):
