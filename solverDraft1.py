@@ -165,6 +165,10 @@ def solver(ogPuzzle, lastCount = None):
         lastCount = 0
 
     unsolvedCount = 0
+    minPossible = 9
+    minRow = 0
+    minCol = 0
+    minVals = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     # ogBlocks = getBlocks(ogPuzzle)
     # print(ogBlocks) # TEMP
 
@@ -211,6 +215,12 @@ def solver(ogPuzzle, lastCount = None):
 
                     curPuzzle[i][j] = copy.copy(possibleValues[0])
                     unsolvedCount -= 1
+                
+                elif len(possibleValues) < len(minVals):
+
+                    minRow = i
+                    minCol = j
+                    minVals = copy.copy(possibleValues)
                     # unsolved.remove([i, j])
                     # i = 0
                     # j = 0
@@ -236,9 +246,14 @@ def solver(ogPuzzle, lastCount = None):
 
         if unsolvedCount == lastCount:
 
-            print("Something went wrong")
-            printPuzzle(curPuzzle)
-            quit()
+            # print("Something went wrong")
+            # printPuzzle(curPuzzle)
+            # quit()
+            for i in minVals:
+
+                curPuzzle[minRow][minCol] = i
+                solver(curPuzzle, unsolvedCount)
+            
 
         else:
 
