@@ -13,7 +13,8 @@ for i in `seq 1 5`; do
     then
       rm tempresult1
     fi
-    ./a.exe < ./puzzles/p$i > tempresult1
+    python solverDraft1.py ./puzzles/p$i > tempresult1
+    # python solverDraft1 -i
     diff tempresult1 ./solutions/s$i > tempcnt
     if [ -s tempcnt ] ; then
       echo "  !!Incorrect for $i th example."
@@ -24,11 +25,11 @@ for i in `seq 1 5`; do
 
     echo "==================" >> result
     echo "test" $i:  >> result
-    echo "student:" >> result
-     ./a.exe < ./testfiles/t$i >> result
+    echo "prototype:" >> result
+     python solverDraft1.py ./puzzles/p$i >> result
     echo "" >>result
-    echo "grader:" >> result
-     cat ./testfiles/o$i >> result
+    echo "solution:" >> result
+     cat ./solutions/s$i >> result
     echo "" >> result
 done
 
