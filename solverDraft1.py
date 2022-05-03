@@ -156,11 +156,14 @@ def check(currentPuzzle, row, col, value):
         return False
 
 
-def solver(ogPuzzle):
+def solver(ogPuzzle, lastCount = None):
 
     curPuzzle = copy.copy(ogPuzzle)
     # possiblePuzzle = copy.copy(curPuzzle)
     # unsolved = []
+    if lastCount == None:
+        lastCount = 0
+
     unsolvedCount = 0
     # ogBlocks = getBlocks(ogPuzzle)
     # print(ogBlocks) # TEMP
@@ -231,7 +234,15 @@ def solver(ogPuzzle):
 
     if unsolvedCount > 0:
 
-        solver(curPuzzle)
+        if unsolvedCount == lastCount:
+
+            print("Something went wrong")
+            printPuzzle(curPuzzle)
+            quit()
+
+        else:
+
+            solver(curPuzzle, unsolvedCount)
 
     else:
 
