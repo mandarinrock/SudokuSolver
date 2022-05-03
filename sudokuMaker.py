@@ -1,9 +1,12 @@
 import sys
 import math
 import copy
+import random
 
 debug = True
-debug = False
+# debug = False
+
+guessMask = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
 
 
@@ -25,29 +28,29 @@ def printPuzzle(printablePuzzle):
 
 
 
-def loadPuzzle(puzzlePath):
+# def loadPuzzle(puzzlePath):
 
-    originalPuzzle = []
+#     originalPuzzle = []
 
-    with open(puzzlePath, "r") as puzzleFile:
+#     with open(puzzlePath, "r") as puzzleFile:
 
-        puzzleLines = puzzleFile.readlines()
+#         puzzleLines = puzzleFile.readlines()
 
-    for i in range(len(puzzleLines)):
+#     for i in range(len(puzzleLines)):
 
-        nextPuzzleLine = []
+#         nextPuzzleLine = []
 
-        for j in puzzleLines[i]:
+#         for j in puzzleLines[i]:
 
-            if j.isdigit():
+#             if j.isdigit():
 
-                nextPuzzleLine.append((int)(j))
+#                 nextPuzzleLine.append((int)(j))
 
-        originalPuzzle.append(nextPuzzleLine)
+#         originalPuzzle.append(nextPuzzleLine)
 
-    # if debug: printPuzzle(originalPuzzle) # DEBUG
+#     # if debug: printPuzzle(originalPuzzle) # DEBUG
 
-    return originalPuzzle
+#     return originalPuzzle
 
 
 
@@ -139,9 +142,9 @@ def check(currentPuzzle, row, col, value):
         return False
 
 
-
 def solver(ogPuzzle, lastCount = None):
 
+    global guessMask
     curPuzzle = copy.deepcopy(ogPuzzle)
     if lastCount == None:
         lastCount = 0
@@ -182,16 +185,16 @@ def solver(ogPuzzle, lastCount = None):
     if unsolvedCount > 0 and unsolvedCount != lastCount:
 
         # If there is still unsolved cells and the most recent run was an improvement, then run it again
-        solver(curPuzzle, unsolvedCount)
+        return solver(curPuzzle, unsolvedCount)
         # print("Program should never reach here") # DEBUG
         # quit()
 
     elif unsolvedCount == 0:
 
         # If there are no unsolved cells left, then the puzzle has been solved
-        printPuzzle(curPuzzle) # DEBUG
+        if debug: printPuzzle(curPuzzle)
         if debug: print("Solved!") # DEBUG
-        quit()
+        return True
 
     elif unsolvedCount == lastCount:
 
@@ -206,36 +209,130 @@ def solver(ogPuzzle, lastCount = None):
             guessPuzzle = copy.deepcopy(curPuzzle)
             guessPuzzle[minX][minY] = guessValue
             # guesser(guessPuzzle, unsolvedCount - 1)
-            solver(guessPuzzle, unsolvedCount - 1)
+            output = solver(guessPuzzle, unsolvedCount - 1)
+
+            # if output == False:
+                # guessMask[minX][minY] = 0
+            if output == True:
+                guessMask[minX][minY] = guessValue
 
 
+            return output
 
 
+def puzzleTester(testPuzzle = None):
+
+    if testPuzzle == None:
+
+        testPuzzle = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+
+        for i in range(9):
+
+            modX = random.randrange(1, 9, 1)
+            modY = random.randrange(1, 9, 1)
+
+            while testPuzzle[modX][modY] != 0:
+
+                modX = random.randrange(1, 9, 1)
+                modY = random.randrange(1, 9, 1)
+
+            possibleNewVals = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+            for newVal in range(1, 10):
+
+                if check(testPuzzle, modX, modY, newVal) == False:
+
+                    if newVal in possibleNewVals:
+
+                        possibleNewVals.remove(newVal)
+
+            if len(possibleNewVals) == 0:
+
+                return False
+
+            updateVal = random.choice(possibleNewVals)
+
+            testPuzzle[modX][modY] = updateVal
 
 
+    if solver(copy.deepcopy(testPuzzle)) == True:
 
+        for i in range(len(guessMask)):
 
+            for j in range(len(guessMask[i])):
 
+                if guessMask[i][j] != 0:
 
+                    testPuzzle[i][j] = guessMask[i][j]
 
-def sudokuSolverMain():
-
-    if len(sys.argv) != 2:
-
-        # print('arguments: ', sys.argv) # DEBUG
-        userInput = input("Please enter path to puzzle file: ")
-        loadPuzzle(userInput)
+        print("\nPuzzle:")
+        printPuzzle(testPuzzle)
+        print("\nMask:")
+        printPuzzle(guessMask)
+        print("\n")
+        quit()
+        return True
 
     else:
 
-        solver(loadPuzzle(sys.argv[1]))
+
+        modX = random.randrange(1, 9, 1)
+        modY = random.randrange(1, 9, 1)
+
+        while testPuzzle[modX][modY] != 0:
+
+            modX = random.randrange(1, 9, 1)
+            modY = random.randrange(1, 9, 1)
+
+        possibleNewVals = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+        for newVal in range(1, 10):
+
+            if check(testPuzzle, modX, modY, newVal) == False:
+
+                if newVal in possibleNewVals:
+
+                    possibleNewVals.remove(newVal)
+
+        if len(possibleNewVals) == 0:
+
+            return False
+
+        updateVal = random.choice(possibleNewVals)
+
+        testPuzzle[modX][modY] = updateVal
+
+        puzzleTester(testPuzzle)
+
+
+
+
+
+# def sudokuSolverMain():
+
+#     if len(sys.argv) != 2:
+
+#         # print('arguments: ', sys.argv) # DEBUG
+#         userInput = input("Please enter path to puzzle file: ")
+#         loadPuzzle(userInput)
+
+#     else:
+
+#         solver(loadPuzzle(sys.argv[1]))
 
 
 
 def main():
 
     # printInput(sys.argv)
-    sudokuSolverMain()
+
+    test = False
+
+    while test != True:
+
+        test = puzzleTester()
+        # test = puzzleTester([[0, 5, 1, 0, 0, 0, 0, 3, 0], [0, 3, 7, 0, 4, 8, 2, 9, 5], [9, 4, 8, 5, 2, 0, 6, 0, 7], [0, 6, 9, 3, 1, 0, 7, 0, 0], [0, 0, 0, 2, 8, 9, 3, 4, 6], [8, 2, 0, 0, 6, 0, 0, 0, 1], [7, 0, 6, 0, 0, 2, 0, 0, 9], [3, 0, 4, 8, 5, 6, 1, 7, 2], [5, 8, 2, 9, 0, 0, 4, 0, 3]])
+        # test = puzzleTester([[0, 5, 1, 0, 0, 0, 0, 3, 0], [0, 3, 7, 0, 4, 8, 2, 9, 5], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 2, 8, 9, 3, 4, 6], [8, 2, 0, 0, 6, 0, 0, 0, 1], [7, 0, 6, 0, 0, 2, 0, 0, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0], [5, 8, 2, 9, 0, 0, 4, 0, 3]])
 
 
 
