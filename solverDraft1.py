@@ -160,7 +160,7 @@ def solver(ogPuzzle, lastCount = None):
 
     curPuzzle = copy.copy(ogPuzzle)
     # possiblePuzzle = copy.copy(curPuzzle)
-    # unsolved = []
+    unsolved = []
     if lastCount == None:
         lastCount = 0
 
@@ -189,7 +189,7 @@ def solver(ogPuzzle, lastCount = None):
 
 
 
-                # unsolved.append([i, j]) # TODO
+                unsolved.append([i, j]) # TODO
 
                 possibleValues = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
@@ -244,25 +244,67 @@ def solver(ogPuzzle, lastCount = None):
 
     if unsolvedCount > 0:
 
+        backupPuzzle = copy.copy(curPuzzle)
         if unsolvedCount == lastCount:
 
             # print("Something went wrong")
             # printPuzzle(curPuzzle)
             # quit()
-            for i in minVals:
+            # for i in minVals:
+            possibleValues = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
-                curPuzzle[minRow][minCol] = i
-                solver(curPuzzle, unsolvedCount)
+            for testVal in range(1, 10):
+
+                if check(curPuzzle, minRow, minCol, testVal) == False:
+
+                    if testVal in possibleValues:
+                        possibleValues.remove(testVal)
+
+            for newGuess in possibleValues:
+
+                curPuzzle = copy.copy(backupPuzzle)
+                printPuzzle(curPuzzle)
+
+                print("\nTesting: " + str(newGuess) + " at (" + str(minRow) + ", " + str(minCol) + ")")
+
+                curPuzzle[minRow][minCol] = copy.copy(newGuess)
+                solver(curPuzzle, unsolvedCount-1)
+
+                # for reset in unsolved:
+
+                #     curPuzzle[reset[0]][reset[1]] = 0
+                curPuzzle = copy.copy(ogPuzzle)
+                printPuzzle(curPuzzle)
+                
+                print("\nFinished testing: " + str(newGuess) + " at (" + str(minRow) + ", " + str(minCol) + ")")
+
+
+            for i in range(len(curPuzzle)):
+
+                for j in range(len(curPuzzle)):
+
+                        if check(curPuzzle, i, j, testVal) == True:
+
+                            curPuzzle[i][j] = testVal
+                            solver(curPuzzle, unsolvedCount-1)
+
+
             
 
         else:
 
             solver(curPuzzle, unsolvedCount)
 
-    else:
+    elif unsolvedCount == 0:
 
+        # print("Solved!")
         printPuzzle(curPuzzle)
         quit()
+
+    else:
+
+        print("Something went wrong")
+        # return copy.copy(ogPuzzle)
 
     # i = 0
     # while len(unsolved) != 0:
@@ -283,7 +325,7 @@ def solver(ogPuzzle, lastCount = None):
 
     #                     if testVal in possibleValues:
     #                         possibleValues.remove(testVal)
-                        
+
 
     #                     # possiblePuzzle[i][j].append(testVal)
 
@@ -296,9 +338,9 @@ def solver(ogPuzzle, lastCount = None):
 
 
 
-    printPuzzle(curPuzzle)
+    # printPuzzle(curPuzzle)
 
-                
+
 
 
 
