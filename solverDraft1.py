@@ -1,25 +1,58 @@
+from operator import truediv
 import sys, getopt # DELETE second
 
-# def printInput(inputArguments):
+debug = True
+# debug = False
 
-#     print('arguments: ', inputArguments)
+originalPuzzle = []
+
+def printOriginalPuzzle():
+
+    # if debug: print(originalPuzzle) # DEBUG
+
+    for i in range(len(originalPuzzle)):
+
+        for j in range(len(originalPuzzle[i])-1):
+
+            print(originalPuzzle[i][j], end = " ")
+
+        if i < len(originalPuzzle) - 1:
+
+            print(originalPuzzle[i][-1])
+
+        else:
+
+            print(originalPuzzle[i][-1], end = "")
 
 
 
 def loadPuzzle(puzzlePath):
 
+    global originalPuzzle
+
     with open(puzzlePath, "r") as puzzleFile:
 
-        originalPuzzle = puzzleFile.readlines()
+        puzzleLines = puzzleFile.readlines()
 
-    for i in range(len(originalPuzzle)):
+    for i in range(len(puzzleLines)):
 
-        # originalPuzzle[i].split()
-        print(originalPuzzle[i], end = "")
+        # puzzleLines[i].split()
+        # if debug: print(puzzleLines[i], end = "") # DEBUG
+        nextPuzzleLine = []
 
-        # for j in range(len(originalPuzzle[i])):
+        for j in puzzleLines[i]:
 
-            # print(originalPuzzle[i][j], end= " ")
+            if j.isdigit():
+
+                nextPuzzleLine.append(j)
+
+
+        originalPuzzle.append(nextPuzzleLine)
+
+            # print(puzzleLines[i][j], end= " ")
+
+    if debug: printOriginalPuzzle()
+
 
 
 def sudokuSolver():
