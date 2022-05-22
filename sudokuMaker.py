@@ -4,7 +4,7 @@ import copy
 import random
 
 debug = True
-# debug = False
+debug = False
 
 guessMask = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
@@ -38,18 +38,7 @@ def getBlocks(linePuzzle):
 
         for j in range(len(linePuzzle[i])):
 
-
-            # if j % 3 == 0:
-
-            #     jOffset
-
-          
-           
-
-           
-            puzzleBlocks[(3 * math.floor(i / 3)) + math.floor(j / 3)][(3 * (i % 3)) + (j % 3)] = copy.copy(linePuzzle[i][j])
-
-    # puzzleBlocks[0][0] = linePuzzle[0][0]
+          puzzleBlocks[(3 * math.floor(i / 3)) + math.floor(j / 3)][(3 * (i % 3)) + (j % 3)] = copy.copy(linePuzzle[i][j])
 
     return puzzleBlocks
 
@@ -93,19 +82,9 @@ def check(currentPuzzle, row, col, value):
     # Check if the value already exists in the block
     puzzleBlock = getBlocks(currentPuzzle)
     blockIndex = blockNum(row, col)
-    # if blockIndex == 0:
-        # print(value)
-        # print(puzzleBlock[blockIndex])
     check3 = possibleCheck(puzzleBlock[blockIndex], value)
 
-    # if check1 == False or check2 == False or check3 == False:
-
-    #     return False
-
     if check1 == True and check2 == True and check3 == True:
-        # print(row)
-        # print(col)
-        # print(value)
         return True
     else:
         return False
@@ -155,8 +134,6 @@ def solver(ogPuzzle, lastCount = None):
 
         # If there is still unsolved cells and the most recent run was an improvement, then run it again
         return solver(curPuzzle, unsolvedCount)
-        # print("Program should never reach here") # DEBUG
-        # quit()
 
     elif unsolvedCount == 0:
 
@@ -169,23 +146,13 @@ def solver(ogPuzzle, lastCount = None):
 
         # If there has been no improvement in the most recent run, then begin guessing algorithm
         if debug: printPuzzle(curPuzzle) # DEBUG
-
         for guessValue in minValues:
 
             if debug: print("\n[" + str(minX) + "][" + str(minY) + "]: " + str(guessValue)) # DEBUG
-            # print(guessValue) # DEBUG
-
             guessPuzzle = copy.deepcopy(curPuzzle)
             guessPuzzle[minX][minY] = guessValue
-            # guesser(guessPuzzle, unsolvedCount - 1)
             output = solver(guessPuzzle, unsolvedCount - 1)
-
-            # if output == False:
-                # guessMask[minX][minY] = 0
-            if output == True:
-                guessMask[minX][minY] = guessValue
-
-
+            if output == True: guessMask[minX][minY] = guessValue
             return output
 
 
@@ -274,26 +241,7 @@ def puzzleTester(testPuzzle = None):
         puzzleTester(testPuzzle)
 
 
-
-
-
-# def sudokuSolverMain():
-
-#     if len(sys.argv) != 2:
-
-#         # print('arguments: ', sys.argv) # DEBUG
-#         userInput = input("Please enter path to puzzle file: ")
-#         loadPuzzle(userInput)
-
-#     else:
-
-#         solver(loadPuzzle(sys.argv[1]))
-
-
-
 def main():
-
-    # printInput(sys.argv)
 
     test = False
 
