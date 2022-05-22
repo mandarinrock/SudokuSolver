@@ -28,32 +28,6 @@ def printPuzzle(printablePuzzle):
 
 
 
-# def loadPuzzle(puzzlePath):
-
-#     originalPuzzle = []
-
-#     with open(puzzlePath, "r") as puzzleFile:
-
-#         puzzleLines = puzzleFile.readlines()
-
-#     for i in range(len(puzzleLines)):
-
-#         nextPuzzleLine = []
-
-#         for j in puzzleLines[i]:
-
-#             if j.isdigit():
-
-#                 nextPuzzleLine.append((int)(j))
-
-#         originalPuzzle.append(nextPuzzleLine)
-
-#     # if debug: printPuzzle(originalPuzzle) # DEBUG
-
-#     return originalPuzzle
-
-
-
 def getBlocks(linePuzzle):
 
     # Convert puzzle organized by rows into puzzle organized by 3x3 blocks
@@ -62,22 +36,17 @@ def getBlocks(linePuzzle):
 
     for i in range(len(linePuzzle)):
 
-        # if i % 3 == 0:
-        #     iOffset += 3
-
-        # jOffset = -1
         for j in range(len(linePuzzle[i])):
 
 
             # if j % 3 == 0:
 
-            #     jOffset += 1
+            #     jOffset
 
-            # print("i: " + str(i) + " j: " + str(j))
-            # print("iOffset: " + str(iOffset) + " jOffset: " + str(jOffset))
-            # print("linePuzzle[i][j]: " + str(linePuzzle[i][j]))
+          
+           
 
-            # puzzleBlocks[iOffset + jOffset][(3 * (i % 3)) + (j % 3)] = linePuzzle[i][j]
+           
             puzzleBlocks[(3 * math.floor(i / 3)) + math.floor(j / 3)][(3 * (i % 3)) + (j % 3)] = copy.copy(linePuzzle[i][j])
 
     # puzzleBlocks[0][0] = linePuzzle[0][0]
